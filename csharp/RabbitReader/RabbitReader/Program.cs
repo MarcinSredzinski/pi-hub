@@ -1,13 +1,21 @@
 ﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
-var factory = new ConnectionFactory() { HostName = "localhost" };
-string queueName = "hello";
+IConfiguration config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
+
+var applicationSettings = config.GetSection("ApplicationSettings");
+string hostName = applicationSettings.GetSection("QueueHostName").Get<string>();
+string queueName = applicationSettings.GetSection("QueueName").Get<string>();
+
+var factory = new ConnectionFactory() { HostName = hostName };
 
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
-channel.QueueDeclare(queue: queueName , durable: false, exclusive: false, autoDelete: false, arguments: null);
+channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
 
 var consumer = new EventingBasicConsumer(channel);
 consumer.Received += (model, ea) =>
