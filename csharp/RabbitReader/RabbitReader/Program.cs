@@ -1,31 +1,26 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client.Events;
+using RabbitReader;
+using RabbitReader.RabbitMQ;
 using System.Text;
-using Microsoft.Extensions.Configuration;
 
-IConfiguration config = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
-    .Build();
+IConfiguration config = Startup.BuildConfiguration();
+Startup.ConfigureLogger();
+
 
 var applicationSettings = config.GetSection("ApplicationSettings");
-string hostName = applicationSettings.GetSection("QueueHostName").Get<string>();
-string queueName = applicationSettings.GetSection("QueueName").Get<string>();
+string targetApiUrl = applicationSettings.GetSection("TargetApiUrl").Get<string>();
 
-var factory = new ConnectionFactory() { HostName = hostName };
+var queue = new QueueDeclaration(config, OnMessageReceived);
 
-using var connection = factory.CreateConnection();
-using var channel = connection.CreateModel();
-channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
 
-var consumer = new EventingBasicConsumer(channel);
-consumer.Received += (model, ea) =>
+Console.WriteLine(" Press enter to exit.");
+Console.ReadLine();
+
+
+static void OnMessageReceived(object? model, BasicDeliverEventArgs ea)
 {
     var body = ea.Body.ToArray();
     var message = Encoding.UTF8.GetString(body);
     Console.WriteLine("Received {0} at {1}", message, DateTime.Now);
-};
-
-channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);
-
-Console.WriteLine(" Press enter to exit.");
-Console.ReadLine();
+}
