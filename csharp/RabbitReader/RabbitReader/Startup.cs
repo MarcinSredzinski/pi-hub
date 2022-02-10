@@ -13,8 +13,7 @@ namespace RabbitReader
             services.AddSingleton<HttpClient>()
                 .AddSingleton<IApiClient, ApiClient>()
                 .AddSingleton<IApiHandler, ApiHandler>()
-                .AddSingleton<IQueueDeclaration, QueueDeclaration>(provider =>
-                    new QueueDeclaration(provider.GetService<IConfiguration>(), provider.GetService<IApiHandler>().OnMessageReceived));
+                .AddSingleton<IQueueDeclaration, QueueDeclaration>();
         }
         internal static void BuildConfiguration(IConfigurationBuilder configurationBuilder)
         {
