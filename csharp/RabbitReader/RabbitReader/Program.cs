@@ -1,31 +1,33 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.Extensions.Configuration;
-using RabbitMQ.Client.Events;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using RabbitReader;
+using RabbitReader.API;
 using RabbitReader.RabbitMQ;
-using System.Text;
-using System.Text.Json;
 
-IConfiguration config = Startup.BuildConfiguration();
-Startup.ConfigureLogger();
-HttpClient client = new HttpClient();
+var host = Host.CreateDefaultBuilder(args)
+    .ConfigureServices((_, services) => Startup.ConfigureServices(services))
+    .ConfigureAppConfiguration(Startup.BuildConfiguration)
+    .Build();
+
+Startup.ConfigureLogger(); //ToDo change Logger configuration/use default. 
+
+var config = host.Services.GetService<IConfiguration>();
+var apiHandler = host.Services.GetService<IApiHandler>();
 
 
-var applicationSettings = config.GetSection("ApplicationSettings");
-string targetApiUrl = applicationSettings.GetSection("TargetApiUrl").Get<string>();
+if (config == null)
+{
+    throw new Exception("Configuration is not loaded properly!");
+}
 
-var queue = new QueueDeclaration(config, OnMessageReceived);
+if (apiHandler == null)
+{
+    throw new Exception("Api handler not initialized properly!");
+}
+
+var queue = new QueueDeclaration(config, apiHandler.OnMessageReceived);
 
 
 Console.WriteLine(" Press enter to exit.");
 Console.ReadLine();
-
-
-static void OnMessageReceived(object? model, BasicDeliverEventArgs ea)
-{
-    //ToDo follow acordingly: https://docs.microsoft.com/en-us/dotnet/csharp/tutorials/console-webapiclient
-    var body = ea.Body.ToArray();
-    var message = Encoding.UTF8.GetString(body);
-    var serializedResponse = JsonSerializer.Serialize(body);
-    Console.WriteLine("Received {0} at {1}", message, DateTime.Now);
-}

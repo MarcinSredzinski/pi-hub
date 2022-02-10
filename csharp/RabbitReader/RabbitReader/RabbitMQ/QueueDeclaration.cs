@@ -4,10 +4,21 @@ using RabbitMQ.Client.Events;
 
 namespace RabbitReader.RabbitMQ
 {
-    internal class QueueDeclaration
+    internal interface IQueueDeclaration
     {
-        public QueueDeclaration(IConfiguration config, EventHandler<BasicDeliverEventArgs> onReceivedMessageHandler)
+        string HostName { get; }
+        string QueueName { get; }
+        IConnection? Connection { get; set; }
+    }
+
+    internal class QueueDeclaration : IQueueDeclaration
+    {
+        public QueueDeclaration(IConfiguration? config, EventHandler<BasicDeliverEventArgs> onReceivedMessageHandler)
         {
+            if (config == null)
+            {
+                throw new Exception("Configuration is not loaded properly!");
+            }
             var applicationSettings = config.GetSection("ApplicationSettings");
             HostName = applicationSettings.GetSection("QueueHostName").Get<string>();
             QueueName = applicationSettings.GetSection("QueueName").Get<string>();
