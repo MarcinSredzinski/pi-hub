@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using Serilog;
 
 namespace RabbitReader.RabbitMQ;
 
@@ -11,8 +12,14 @@ internal interface IQueueDeclaration
 
 internal class QueueDeclaration : IQueueDeclaration
 {
-    public QueueDeclaration(IConfiguration? config)
+    private readonly ILogger _logger;
+    public string HostName { get; }
+    public string QueueName { get; }
+    public IConnection? Connection { get; set; }
+
+    public QueueDeclaration(IConfiguration? config, ILogger logger)
     {
+        _logger = logger;
         if (config == null)
         {
             throw new Exception("Configuration is not loaded properly!");
@@ -20,13 +27,8 @@ internal class QueueDeclaration : IQueueDeclaration
         var applicationSettings = config.GetSection("ApplicationSettings");
         HostName = applicationSettings.GetSection("QueueHostName").Get<string>();
         QueueName = applicationSettings.GetSection("QueueName").Get<string>();
-
+        _logger.Debug("{0} - instance initialized properly. ", nameof(QueueDeclaration));
     }
-
-    public string HostName { get; }
-    public string QueueName { get; }
-    public IConnection? Connection { get; set; }
-
 
     public void Declare(EventHandler<BasicDeliverEventArgs> onReceivedMessageHandler)
     {
@@ -40,5 +42,6 @@ internal class QueueDeclaration : IQueueDeclaration
             consumer.Received += onReceivedMessageHandler;
             channel.BasicConsume(queue: QueueName, autoAck: true, consumer: consumer);
         }
+        _logger.Debug("{0} - Queue declared properly. ", nameof(Declare));
     }
 }
