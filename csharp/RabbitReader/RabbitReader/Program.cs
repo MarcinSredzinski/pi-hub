@@ -4,11 +4,11 @@ using RabbitReader;
 using RabbitReader.RabbitMQ;
 
 var host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices((_, services) => Startup.ConfigureServices(services))
     .ConfigureAppConfiguration(Startup.BuildConfiguration)
+    .ConfigureLogging(x => x.ConfigureLogger())
+    .ConfigureServices((_, services) => Startup.ConfigureServices(services))
     .Build();
 
-Startup.ConfigureLogger(); //ToDo change Logger configuration/use default. 
 
 var apiHandler = host.Services.GetService<IApiHandler>();
 var queue = host.Services.GetService<IQueueDeclaration>();
