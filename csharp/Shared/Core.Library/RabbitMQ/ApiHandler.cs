@@ -1,18 +1,18 @@
-﻿using Core.Library.Models;
-using RabbitMQ.Client.Events;
-using RabbitReader.API;
-using Serilog;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
+using Core.Library.Api;
+using Core.Library.Models;
+using RabbitMQ.Client.Events;
+using Serilog;
 
-namespace RabbitReader.RabbitMQ;
+namespace Core.Library.RabbitMQ;
 
-internal interface IApiHandler
+public interface IApiHandler
 {
     void OnMessageReceived(object? model, BasicDeliverEventArgs ea);
 }
 
-internal class ApiHandler : IApiHandler
+public class ApiHandler : IApiHandler
 {
     private readonly IApiClient _apiClient;
     private readonly ILogger _logger;

@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Core.Library.Api;
+using Core.Library.RabbitMQ;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RabbitReader.API;
-using RabbitReader.RabbitMQ;
 using Serilog;
-using Serilog.Core;
 using ILogger = Serilog.ILogger;
 
 namespace RabbitReader
@@ -14,7 +14,7 @@ namespace RabbitReader
         internal static void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddScoped<ILogger>(x=> Log.Logger)
+                .AddScoped<ILogger>(x => Log.Logger)
                 .AddSingleton<HttpClient>()
                 .AddSingleton<IApiClient, ApiClient>()
                 .AddSingleton<IApiHandler, ApiHandler>()
@@ -25,7 +25,7 @@ namespace RabbitReader
             configurationBuilder
                 .AddJsonFile("appsettings.json");
         }
-        internal static ILoggingBuilder ConfigureLogger(this ILoggingBuilder loggingBuilder) 
+        internal static ILoggingBuilder ConfigureLogger(this ILoggingBuilder loggingBuilder)
         {
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
             string logPath = Path.Combine(basePath, "logs", "my_logNew.log");

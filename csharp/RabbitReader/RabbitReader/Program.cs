@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RabbitReader;
-using RabbitReader.RabbitMQ;
+using Core.Library.RabbitMQ;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(Startup.BuildConfiguration)

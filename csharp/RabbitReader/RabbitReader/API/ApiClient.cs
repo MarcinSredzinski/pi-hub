@@ -1,15 +1,11 @@
 ﻿using System.Net.Http.Json;
+using Core.Library.Api;
 using Core.Library.Models;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace RabbitReader.API
 {
-    internal interface IApiClient
-    {
-        Task<HttpResponseMessage> PostSensorDataAsync(BmpMeasurementDto measurement);
-    }
-
     internal class ApiClient : IApiClient
     {
         private readonly ILogger _logger;
