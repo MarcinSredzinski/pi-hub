@@ -1,11 +1,20 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Core.Library.RabbitMQ;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using ILogger = Serilog.ILogger;
 
-namespace RabbitWritter
+namespace RabbitWriter
 {
     internal static class Startup
     {
+        internal static void ConfigureServices(IServiceCollection services)
+        {
+            services
+                .AddScoped<ILogger>(x => Log.Logger)
+                .AddSingleton<IQueueWriterDeclaration, QueueWriterDeclaration>();
+        }
         internal static void BuildConfiguration(IConfigurationBuilder configurationBuilder)
         {
             configurationBuilder
@@ -18,7 +27,7 @@ namespace RabbitWritter
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.File(logPath, rollingInterval: RollingInterval.Day)
                 .WriteTo.Console()
-                .MinimumLevel.Debug()                                               //ToDo make dependent on the current environment.
+                .MinimumLevel.Debug()                                               
                 .CreateLogger();
             loggingBuilder.AddSerilog(Log.Logger);
             return loggingBuilder;

@@ -11,7 +11,7 @@ var host = Host.CreateDefaultBuilder(args)
 
 
 var apiHandler = host.Services.GetService<IApiHandler>();
-var queue = host.Services.GetService<IQueueDeclaration>();
+var queue = host.Services.GetService<IQueueReaderDeclaration>();
 if (apiHandler == null || queue == null)
 {
     throw new Exception("Queue or api handler did not initialize properly.");

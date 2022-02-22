@@ -5,19 +5,19 @@ using Serilog;
 
 namespace Core.Library.RabbitMQ;
 
-public interface IQueueDeclaration
+public interface IQueueReaderDeclaration
 {
     void Declare(EventHandler<BasicDeliverEventArgs> onReceivedMessageHandler);
 }
 
-public class QueueDeclaration : IQueueDeclaration
+public class QueueReaderDeclaration : IQueueReaderDeclaration
 {
     private readonly ILogger _logger;
     public string HostName { get; }
     public string QueueName { get; }
     public IConnection? Connection { get; set; }
 
-    public QueueDeclaration(IConfiguration? config, ILogger logger)
+    public QueueReaderDeclaration(IConfiguration? config, ILogger logger)
     {
         _logger = logger;
         if (config == null)
@@ -27,7 +27,7 @@ public class QueueDeclaration : IQueueDeclaration
         var applicationSettings = config.GetSection("ApplicationSettings");
         HostName = applicationSettings.GetSection("QueueHostName").Get<string>();
         QueueName = applicationSettings.GetSection("QueueName").Get<string>();
-        _logger.Debug("{0} - instance initialized properly. ", nameof(QueueDeclaration));
+        _logger.Debug("{0} - instance initialized properly. ", nameof(QueueReaderDeclaration));
     }
 
     public void Declare(EventHandler<BasicDeliverEventArgs> onReceivedMessageHandler)
