@@ -1,9 +1,9 @@
-﻿using RabbitMQ.Client.Events;
+﻿using Core.Library.Models;
+using RabbitMQ.Client.Events;
 using RabbitReader.API;
-using RabbitReader.Models;
+using Serilog;
 using System.Text;
 using System.Text.Json;
-using Serilog;
 
 namespace RabbitReader.RabbitMQ;
 

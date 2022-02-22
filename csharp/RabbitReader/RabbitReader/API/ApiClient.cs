@@ -1,5 +1,5 @@
-﻿using RabbitReader.Models;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
+using Core.Library.Models;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
