@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitWritter", "RabbitWritter\RabbitWritter.csproj", "{8B9F2008-27E7-47A8-9A21-87B148F071A4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Library", "..\Shared\Core.Library\Core.Library.csproj", "{CA0D1901-466C-432A-B8F3-414BA1602A77}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8B9F2008-27E7-47A8-9A21-87B148F071A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B9F2008-27E7-47A8-9A21-87B148F071A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B9F2008-27E7-47A8-9A21-87B148F071A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B9F2008-27E7-47A8-9A21-87B148F071A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA0D1901-466C-432A-B8F3-414BA1602A77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA0D1901-466C-432A-B8F3-414BA1602A77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA0D1901-466C-432A-B8F3-414BA1602A77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA0D1901-466C-432A-B8F3-414BA1602A77}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {681EF98F-4CF6-4621-B87A-6D7FF35AE69C}
+	EndGlobalSection
+EndGlobal
