@@ -3,14 +3,14 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Serilog;
 
-namespace RabbitReader.RabbitMQ;
+namespace Core.Library.RabbitMQ;
 
-internal interface IQueueDeclaration
+public interface IQueueDeclaration
 {
     void Declare(EventHandler<BasicDeliverEventArgs> onReceivedMessageHandler);
 }
 
-internal class QueueDeclaration : IQueueDeclaration
+public class QueueDeclaration : IQueueDeclaration
 {
     private readonly ILogger _logger;
     public string HostName { get; }
