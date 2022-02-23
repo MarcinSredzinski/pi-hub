@@ -15,11 +15,13 @@ namespace RabbitWriter
                 .AddScoped<ILogger>(x => Log.Logger)
                 .AddSingleton<IQueueWriterDeclaration, QueueWriterDeclaration>();
         }
+
         internal static void BuildConfiguration(IConfigurationBuilder configurationBuilder)
         {
             configurationBuilder
                 .AddJsonFile("appsettings.json");
         }
+
         internal static ILoggingBuilder ConfigureLogger(this ILoggingBuilder loggingBuilder)
         {
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
