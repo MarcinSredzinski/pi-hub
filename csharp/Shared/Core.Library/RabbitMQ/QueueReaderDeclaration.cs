@@ -44,4 +44,9 @@ public class QueueReaderDeclaration : IQueueReaderDeclaration
         }
         _logger.Debug("{0} - Queue declared properly. ", nameof(Declare));
     }
+
+    ~QueueReaderDeclaration()
+    {
+        Connection?.Close();
+    }
 }
