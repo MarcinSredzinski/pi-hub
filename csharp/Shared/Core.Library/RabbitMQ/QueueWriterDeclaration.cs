@@ -18,6 +18,7 @@ public class QueueWriterDeclaration : QueueDeclarationBase, IQueueWriterDeclarat
         {
             throw new Exception("Configuration is not loaded properly!");
         }
+        Logger.Debug("{0} - instance initialized properly. ", nameof(QueueWriterDeclaration));
     }
 
     public void PushMessage(byte[] messageBytes)

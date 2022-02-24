@@ -14,7 +14,7 @@ public abstract class QueueDeclarationBase
         var applicationSettings = config.GetSection("ApplicationSettings");
         HostName = applicationSettings.GetSection("QueueHostName").Get<string>();
         QueueName = applicationSettings.GetSection("QueueName").Get<string>();
-        Logger.Debug("{0} - instance initialized properly. ", nameof(QueueReaderDeclaration));
+        Logger.Debug("{0} - instance initialized properly. ", nameof(QueueDeclarationBase));
         var factory = new ConnectionFactory() { HostName = HostName };
         Connection = factory.CreateConnection();
     }
