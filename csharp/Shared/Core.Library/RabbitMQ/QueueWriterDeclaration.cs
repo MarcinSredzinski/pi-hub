@@ -2,51 +2,37 @@
 using RabbitMQ.Client;
 using Serilog;
 
-namespace Core.Library.RabbitMQ
+namespace Core.Library.RabbitMQ;
+
+public interface IQueueWriterDeclaration
 {
-    public interface IQueueWriterDeclaration
+    void PushMessage(byte[] messageBytes);
+}
+
+public class QueueWriterDeclaration : QueueDeclarationBase, IQueueWriterDeclaration
+{
+    public QueueWriterDeclaration(IConfiguration config, ILogger logger) : base(config, logger)
     {
-        void PushMessage(byte[] messageBytes);
+        Logger = logger;
+        if (config == null)
+        {
+            throw new Exception("Configuration is not loaded properly!");
+        }
     }
 
-
-    public class QueueWriterDeclaration : IQueueWriterDeclaration
+    public void PushMessage(byte[] messageBytes)
     {
-        private readonly ILogger _logger;
-        public string HostName { get; }
-        public string QueueName { get; }
-        public IConnection? Connection { get; set; }
+        using var channel = Connection!.CreateModel();
+        channel.QueueDeclare(queue: QueueName,
+            durable: true,
+            exclusive: false,
+            autoDelete: false,
+            arguments: null);
+        channel.BasicPublish(exchange: "",
+            routingKey: QueueName,
+            basicProperties: null,
+            body: messageBytes);
 
-        public QueueWriterDeclaration(IConfiguration? config, ILogger logger)
-        {
-            _logger = logger;
-            if (config == null)
-            {
-                throw new Exception("Configuration is not loaded properly!");
-            }
-            var applicationSettings = config.GetSection("ApplicationSettings");
-            HostName = applicationSettings.GetSection("QueueHostName").Get<string>();
-            QueueName = applicationSettings.GetSection("QueueName").Get<string>();
-            _logger.Debug("{0} - instance initialized properly. ", nameof(QueueReaderDeclaration));
-            var factory = new ConnectionFactory() { HostName = HostName };
-            Connection = factory.CreateConnection();
-        }
-
-        public void PushMessage(byte[] messageBytes)
-        {
-            using var channel = Connection!.CreateModel();
-            channel.QueueDeclare(queue: "hello",
-                durable: true,
-                exclusive: false,
-                autoDelete: false,
-                arguments: null);
-            channel.BasicPublish(exchange: "",
-                routingKey: "hello",
-                basicProperties: null,
-                body: messageBytes);
-
-            _logger.Debug("{0} - message was sent.", nameof(PushMessage));
-
-        }
+        Logger.Debug("{0} - message was sent.", nameof(PushMessage));
     }
 }

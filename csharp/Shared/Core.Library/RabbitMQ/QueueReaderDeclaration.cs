@@ -10,43 +10,30 @@ public interface IQueueReaderDeclaration
     void Declare(EventHandler<BasicDeliverEventArgs> onReceivedMessageHandler);
 }
 
-public class QueueReaderDeclaration : IQueueReaderDeclaration
+public class QueueReaderDeclaration : QueueDeclarationBase, IQueueReaderDeclaration
 {
-    private readonly ILogger _logger;
-    public string HostName { get; }
-    public string QueueName { get; }
-    public IConnection? Connection { get; set; }
-
-    public QueueReaderDeclaration(IConfiguration? config, ILogger logger)
+    public QueueReaderDeclaration(IConfiguration config, ILogger logger) : base(config, logger)
     {
-        _logger = logger;
+        Logger = logger;
         if (config == null)
         {
             throw new Exception("Configuration is not loaded properly!");
         }
-        var applicationSettings = config.GetSection("ApplicationSettings");
-        HostName = applicationSettings.GetSection("QueueHostName").Get<string>();
-        QueueName = applicationSettings.GetSection("QueueName").Get<string>();
-        _logger.Debug("{0} - instance initialized properly. ", nameof(QueueReaderDeclaration));
+        Logger.Debug("{0} - instance initialized properly. ", nameof(QueueReaderDeclaration));
     }
 
     public void Declare(EventHandler<BasicDeliverEventArgs> onReceivedMessageHandler)
     {
-        var factory = new ConnectionFactory() { HostName = HostName };
-        Connection = factory.CreateConnection();
+        if (Connection == null) throw new ArgumentException($"{nameof(QueueReaderDeclaration)} - {nameof(Declare)}- Connection is null!");
+
         var channel = Connection.CreateModel();
         {
-            channel.QueueDeclare(queue: QueueName, durable: true, //ToDo set back to false after testing
+            channel.QueueDeclare(queue: QueueName, durable: true,            //ToDo set back to false after testing
                 exclusive: false, autoDelete: false, arguments: null);
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += onReceivedMessageHandler;
             channel.BasicConsume(queue: QueueName, autoAck: true, consumer: consumer);
         }
-        _logger.Debug("{0} - Queue declared properly. ", nameof(Declare));
-    }
-
-    ~QueueReaderDeclaration()
-    {
-        Connection?.Close();
+        Logger.Debug("{0} - Queue declared properly. ", nameof(Declare));
     }
 }
