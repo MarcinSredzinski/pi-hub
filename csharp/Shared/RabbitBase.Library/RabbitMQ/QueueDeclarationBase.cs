@@ -2,7 +2,7 @@
 using RabbitMQ.Client;
 using Serilog;
 
-namespace Core.Library.RabbitMQ;
+namespace RabbitBase.Library.RabbitMQ;
 
 public abstract class QueueDeclarationBase
 {

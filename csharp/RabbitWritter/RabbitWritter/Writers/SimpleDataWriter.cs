@@ -1,7 +1,7 @@
 ﻿using Core.Library.Models;
-using Core.Library.RabbitMQ;
 using System.Text;
 using System.Text.Json;
+using RabbitBase.Library.RabbitMQ;
 using ILogger = Serilog.ILogger;
 
 namespace RabbitWriter.Writers

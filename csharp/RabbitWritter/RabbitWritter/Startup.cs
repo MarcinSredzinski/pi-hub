@@ -1,7 +1,7 @@
-﻿using Core.Library.RabbitMQ;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RabbitBase.Library.RabbitMQ;
 using Serilog;
 using ILogger = Serilog.ILogger;
 

@@ -1,6 +1,6 @@
-﻿using Core.Library.RabbitMQ;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RabbitBase.Library.RabbitMQ;
 using RabbitWriter;
 using RabbitWriter.Writers;
 using Serilog;

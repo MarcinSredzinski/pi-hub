@@ -5,7 +5,7 @@ using Core.Library.Models;
 using RabbitMQ.Client.Events;
 using Serilog;
 
-namespace Core.Library.RabbitMQ;
+namespace RabbitBase.Library.RabbitMQ;
 
 public interface IApiHandler
 {
