@@ -1,4 +1,5 @@
 ﻿using Core.Library.Models;
+using DataStore.Library.DbAccess;
 
 namespace SensorDataStore.WebApi
 {
@@ -10,14 +11,15 @@ namespace SensorDataStore.WebApi
             app.MapPost("/BMPSensor", Post);
         }
 
-        private static async Task<IEnumerable<BmpMeasurementDto>> Get()
+        private static async Task<IResult> Get(ICouchbaseDataAccess couchbaseDataAccess)
         {
-
+            var results = couchbaseDataAccess.LoadData();
+            return results == null ? Results.NotFound() : Results.Ok(results);
         }
 
         private static async Task Post()
         {
-
+            throw new NotImplementedException();
         }
 
 
