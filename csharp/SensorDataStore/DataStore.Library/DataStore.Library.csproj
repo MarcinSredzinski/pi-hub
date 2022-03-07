@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -14,6 +14,16 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Core.Library\Core.Library.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Mappers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Couchbase.Extensions.DependencyInjection" Version="3.2.8" />
+    <PackageReference Include="CouchbaseNetClient" Version="3.2.8" />
+    <PackageReference Include="Linq2Couchbase" Version="2.0.0" />
   </ItemGroup>
 
 </Project>
