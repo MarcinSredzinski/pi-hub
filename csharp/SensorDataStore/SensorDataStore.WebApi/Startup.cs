@@ -1,13 +1,15 @@
-﻿using DataStore.Library.DbAccess;
+﻿using DataStore.Library.Abstractions;
+using DataStore.Library.Data;
+using DataStore.Library.DbAccess;
 
-namespace SensorDataStore.WebApi
+namespace SensorDataStore.WebApi;
+
+internal static class Startup
 {
-    internal static class Startup
+    internal static void ConfigureServices(this IServiceCollection services)
     {
-        internal static void ConfigureServices(this IServiceCollection services)
-        {
-            services
-                .AddScoped<ICouchbaseDataAccess, CouchbaseDataAccess>();
-        }
+        services
+            .AddSingleton<ICouchbaseDataAccess, CouchbaseDataAccess>()
+            .AddScoped<ISensorData, SensorData>();
     }
 }

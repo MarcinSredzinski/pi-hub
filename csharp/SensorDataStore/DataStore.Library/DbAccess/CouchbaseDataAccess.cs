@@ -1,32 +1,47 @@
-﻿using Core.Library.Models;
+﻿using Couchbase;
+using Couchbase.KeyValue;
+using Couchbase.Query;
+using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
+using DataStore.Library.Abstractions;
 
 namespace DataStore.Library.DbAccess
 {
-    public interface ICouchbaseDataAccess
-    {
-        IEnumerable<BmpMeasurementDto> LoadData();
-    }
-
     public class CouchbaseDataAccess : ICouchbaseDataAccess
     {
-        public IEnumerable<BmpMeasurementDto> LoadData()
+
+        public ICluster CouchbaseCluster { get; private set; }
+        public IBucket MinimalApiBucket { get; private set; }
+        public ICouchbaseCollection BMPSensorData { get; private set; }
+
+        public CouchbaseDataAccess(IConfiguration configuration)
         {
-            return GenerateMeasurement();
+            try
+            {
+                var task = Task.Run(async () =>
+                {
+                    string connectionString = configuration.GetSection("ConnectionStrings:CouchBase:ConnectionString").Value;
+                    string pswd = configuration.GetSection("ConnectionStrings:CouchBase:Password").Value;
+                    string uname = configuration.GetSection("ConnectionStrings:CouchBase:Username").Value;
+                    string bucket = configuration.GetSection("ConnectionStrings:CouchBase:Bucket").Value;
+
+                    CouchbaseCluster = await Cluster.ConnectAsync(connectionString, uname, pswd);
+                    MinimalApiBucket = await CouchbaseCluster.BucketAsync(bucket);
+                    var defaultScope = await MinimalApiBucket.ScopeAsync("_default");
+                    BMPSensorData = await defaultScope.CollectionAsync("BMPSensorData");
+                });
+                task.Wait();
+            }
+            catch (AggregateException ae)
+            {
+                ae.Handle((x) => throw x);
+            }
         }
 
-        private IEnumerable<BmpMeasurementDto> GenerateMeasurement()
+        public Task<IQueryResult<T>> LoadDataAsync<T>(string query)
         {
-            for (int i = 0; i < 10; i++)
-            {
-                yield return new BmpMeasurementDto
-                {
-                    DateTime = DateTime.Now,
-                    Pressure = 1000 + i,
-                    Temperature = 20 + i
-                };
-            }
+            return CouchbaseCluster.QueryAsync<T>(query);
         }
     }
 }
