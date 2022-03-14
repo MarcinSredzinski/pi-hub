@@ -62,4 +62,3 @@ public static class Api
         return (hmac.Key, hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password)));
     }
 }
-
