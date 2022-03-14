@@ -1,10 +1,6 @@
 using SensorDataStore.WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers();
-builder.Services.AddAuthorization();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.ConfigureServices();
 
 var app = builder.Build();
