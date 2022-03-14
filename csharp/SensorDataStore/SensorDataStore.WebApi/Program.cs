@@ -1,10 +1,7 @@
 using SensorDataStore.WebApi;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers();
-builder.Services.AddAuthorization();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.ConfigureServices();
 
 var app = builder.Build();
@@ -21,4 +18,5 @@ app.UseAuthorization();
 
 app.ConfigureApi();
 
+Log.Logger.Information("We are up and running!");
 app.Run();
