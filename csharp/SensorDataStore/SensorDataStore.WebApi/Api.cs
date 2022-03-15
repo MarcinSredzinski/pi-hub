@@ -49,11 +49,11 @@ public static class Api
         return computedHash.SequenceEqual(passwordHash);
     }
     public static User user = new User();
-   
+
     private static async Task<IResult> Register(UserDto request)
     {
         user.UserName = request.UserName;
-        (user.PasswordHash, user.PasswordSalt) = CreatePasswordHash(request.Password);
+        (user.PasswordSalt, user.PasswordHash) = CreatePasswordHash(request.Password);
         return Results.Ok(user);
     }
     private static (byte[] passwordSalt, byte[] passwordHash) CreatePasswordHash(string password)
