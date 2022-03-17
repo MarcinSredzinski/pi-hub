@@ -1,8 +1,12 @@
-﻿using System.Security.Cryptography;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
 using Core.Library.Models;
 using DataStore.Library.Abstractions;
 using DataStore.Library.Data;
 using JwtTokens.Library.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SensorDataStore.WebApi;
 
@@ -10,12 +14,14 @@ public static class Api
 {
     public static void ConfigureApi(this WebApplication app)
     {
-        app.MapGet("/BMPSensor", Get);
+        app.MapGet("/BMPSensor", Get).RequireAuthorization();
+       // app.MapGet("/BMPSensor", Get);
         app.MapPost("/BMPSensor", Post);
         app.MapPost("/register", Register);
         app.MapPost("/login", Login);
     }
 
+    [Authorize]
     private static async Task<IResult> Get(ISensorData sensorData)
     {
         var results = await sensorData.GetAsync();
@@ -38,10 +44,34 @@ public static class Api
         if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
             return Results.NotFound("Invalid password.");
 
-        return Results.Ok("Token here");
+        var token = CreateToken(user);
+        return Results.Ok(token);
     }
 
-    //Still some bugs. Hash and hash salt doesn't verify well. 
+    private static string CreateToken(User user)
+    {
+        List<Claim> claims = new List<Claim>()
+        {
+            new Claim(ClaimTypes.Name, user.UserName)
+        };
+
+        var key = new SymmetricSecurityKey(
+            System.Text.Encoding.UTF8.GetBytes("GetTheKeyFromTheConfigurationAfterExtraction"));
+
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+        var token = new JwtSecurityToken(
+            "Server", 
+            "Client",
+            claims: claims, 
+            expires: DateTime.Now.AddMinutes(5),
+            signingCredentials:credentials
+            );
+
+        var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+        return jwtToken;
+    }
+
     private static bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
     {
         using var hmac = new HMACSHA512(passwordSalt);

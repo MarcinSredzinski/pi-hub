@@ -1,7 +1,11 @@
 ﻿using DataStore.Library.Abstractions;
 using DataStore.Library.Data;
 using DataStore.Library.DbAccess;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Text;
+using Microsoft.OpenApi.Models;
 
 namespace SensorDataStore.WebApi;
 
@@ -12,8 +16,39 @@ internal static class Startup
         services.AddControllers();
         services.AddAuthorization();
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(c =>
+        {
+            var securityScheme = new OpenApiSecurityScheme
+            {
+                Name = "JWT Authentication", 
+                Description = "Enter JWT Bearer token",
+                In = ParameterLocation.Header, 
+                Type = SecuritySchemeType.Http, 
+                Scheme = "bearer", 
+                BearerFormat = "JWT", 
+                Reference = new OpenApiReference()
+                {
+
+                }
+            }
+        });
         services.AddLogging(x => x.ConfigureLogger());
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = "Client", //.Configuration["Jwt:Audience"],
+                    ValidIssuer = "Server", //.Configuration["Jwt:Issuer"],
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes("GetTheKeyFromTheConfigurationAfterExtraction"))
+
+                };
+            }
+        );
 
         services
             .AddSingleton<ICouchbaseDataAccess, CouchbaseDataAccess>()
