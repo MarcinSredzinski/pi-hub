@@ -15,10 +15,12 @@ public static class Api
     public static void ConfigureApi(this WebApplication app)
     {
         app.MapGet("/GetAuthorized", GetAuthorized);//.RequireAuthorization();
-        app.MapGet("/BMPSensor", Get);
-        app.MapPost("/BMPSensor", Post);
+        app.MapPost("/PostAuthorized", PostAuthorized);
         app.MapPost("/register", Register);
         app.MapPost("/login", Login);
+
+        app.MapGet("/BMPSensor", Get);
+        app.MapPost("/BMPSensor", Post);
     }
 
 
@@ -29,6 +31,13 @@ public static class Api
         return Results.Ok("Dzieki za pomoc ziomeczku");
             //results == null ? Results.NotFound() : Results.Ok(results);
     }
+
+    [Authorize(Policy = "GetAccess")]
+    private static async Task<IResult> PostAuthorized(BmpMeasurementDto measurement)
+    {
+        return Results.Ok(measurement);
+    }
+
 
     private static async Task<IResult> Get(ISensorData sensorData)
     {
@@ -61,7 +70,7 @@ public static class Api
         List<Claim> claims = new List<Claim>()
         {
             new Claim(ClaimTypes.Name, user.UserName),
-            new Claim("Role", "admin")
+            new Claim(ClaimTypes.Role, "admin")
         };
 
         var key = new SymmetricSecurityKey(

@@ -69,9 +69,9 @@ internal static class Startup
         {
             options.AddPolicy("GetAccess", policy =>
             {
-                policy.RequireClaim(ClaimTypes.Name, "string");
+               // policy.RequireClaim(ClaimTypes.Name, "string");
                 //policy.RequireUserName("string");
-               // policy.RequireRole("admin");
+                policy.RequireRole("admin");
             });
         });
 
