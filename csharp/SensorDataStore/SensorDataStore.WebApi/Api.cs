@@ -14,14 +14,22 @@ public static class Api
 {
     public static void ConfigureApi(this WebApplication app)
     {
-        app.MapGet("/BMPSensor", Get).RequireAuthorization();
-       // app.MapGet("/BMPSensor", Get);
+        app.MapGet("/GetAuthorized", GetAuthorized);//.RequireAuthorization();
+        app.MapGet("/BMPSensor", Get);
         app.MapPost("/BMPSensor", Post);
         app.MapPost("/register", Register);
         app.MapPost("/login", Login);
     }
 
-    [Authorize]
+
+    [Authorize(Policy = "GetAccess")]
+    private static async Task<IResult> GetAuthorized()//ISensorData sensorData)
+    {
+        // var results = await sensorData.GetAsync();
+        return Results.Ok("Dzieki za pomoc ziomeczku");
+            //results == null ? Results.NotFound() : Results.Ok(results);
+    }
+
     private static async Task<IResult> Get(ISensorData sensorData)
     {
         var results = await sensorData.GetAsync();
@@ -52,7 +60,8 @@ public static class Api
     {
         List<Claim> claims = new List<Claim>()
         {
-            new Claim(ClaimTypes.Name, user.UserName)
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim("Role", "admin")
         };
 
         var key = new SymmetricSecurityKey(
