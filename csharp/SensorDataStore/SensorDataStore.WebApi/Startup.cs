@@ -7,6 +7,8 @@ using Serilog;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
+using SensorDataStore.WebApi.Auth;
+using JwtAuth.Library.Services;
 
 namespace SensorDataStore.WebApi;
 
@@ -46,24 +48,6 @@ internal static class Startup
                     }
                 });
         });
-        //services.AddSwaggerGen(c =>
-        //{
-        //    var securityScheme = new OpenApiSecurityScheme
-        //    {
-        //        Name = "JWT Authentication", 
-        //        Description = "Enter JWT Bearer token",
-        //        In = ParameterLocation.Header, 
-        //        Type = SecuritySchemeType.Http, 
-        //        Scheme = "bearer", 
-        //        BearerFormat = "JWT", 
-        //        Reference = new OpenApiReference()
-        //        {
-        //            Type = ReferenceType.SecurityScheme,
-        //            Id = "Bearer"
-        //        }
-        //    },
-
-        //});
 
         services.AddAuthorization(options =>
         {
@@ -101,8 +85,13 @@ internal static class Startup
                    .AllowAnyMethod()
                    .AllowAnyHeader();
         }));
+
+
         services
             .AddSingleton<ICouchbaseDataAccess, CouchbaseDataAccess>()
+            .AddTransient<IIssuerService, IssuerService>()
+            .AddTransient<DataStore.Library.Abstractions.IUsersStore, UsersStore>()            
+            .AddTransient<IAuthService, AuthService>()
             .AddScoped<ISensorData, SensorData>();
     }
 

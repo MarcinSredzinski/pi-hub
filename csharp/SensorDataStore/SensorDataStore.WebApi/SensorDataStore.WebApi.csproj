@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Core.Library\Core.Library.csproj" />
-    <ProjectReference Include="..\..\Shared\JwtTokens.Library\JwtTokens.Library.csproj" />
+    <ProjectReference Include="..\..\Shared\JwtTokens.Library\JwtAuth.Library.csproj" />
     <ProjectReference Include="..\DataStore.Library\DataStore.Library.csproj" />
   </ItemGroup>
 

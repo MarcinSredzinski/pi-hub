@@ -14,6 +14,7 @@ namespace DataStore.Library.DbAccess
         public ICluster CouchbaseCluster { get; private set; }
         public IBucket MinimalApiBucket { get; private set; }
         public ICouchbaseCollection BMPSensorData { get; private set; }
+        public ICouchbaseCollection APIUsersData { get; private set; }
 
         public CouchbaseDataAccess(IConfiguration configuration)
         {
@@ -30,6 +31,7 @@ namespace DataStore.Library.DbAccess
                     MinimalApiBucket = await CouchbaseCluster.BucketAsync(bucket);
                     var defaultScope = await MinimalApiBucket.ScopeAsync("_default");
                     BMPSensorData = await defaultScope.CollectionAsync("BMPSensorData");
+                    APIUsersData = await defaultScope.CollectionAsync("APIUsersData");
                 });
                 task.Wait();
             }

@@ -8,6 +8,7 @@ namespace DataStore.Library.Abstractions
     {
         Task<IQueryResult<T>> LoadDataAsync<T>(string query);
         ICouchbaseCollection BMPSensorData { get; }
+        ICouchbaseCollection APIUsersData { get; }
     }
 
 }
