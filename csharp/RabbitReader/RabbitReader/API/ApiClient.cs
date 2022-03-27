@@ -1,7 +1,9 @@
 ﻿using System.Net.Http.Json;
 using Core.Library.Api;
 using Core.Library.Models;
+using JwtAuth.Library.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 namespace RabbitReader.API
@@ -11,23 +13,45 @@ namespace RabbitReader.API
         private readonly ILogger _logger;
         private readonly HttpClient _httpClient;
         private readonly Uri _requestUri;
-        public ApiClient(HttpClient httpClient, IConfiguration config, ILogger logger)
+        private readonly IClientService _clientService;
+        private string JWTToken = string.Empty;
+        private int TimesRetried = 0;
+        private int RetriesLimit = 10;
+
+        public ApiClient(HttpClient httpClient, IConfiguration config, ILogger logger, IClientService clientService)
         {
             _logger = logger;
             _httpClient = httpClient;
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer",
-                "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoic3RyaW5nIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJleHAiOjE2NDc3OTAzNzUsImlzcyI6IlNlcnZlciIsImF1ZCI6IkNsaWVudCJ9.knbBZXe_WLMJ1C50rH5RnxGS-nJz0ACcSRoM0ndfIi7c7Sn7TQ6yWECLPEpXGzHAjw0GTT9U5a3m7OiRRwinig");
+            _clientService = clientService;
+            AuthorizeHttpClient();
             string targetUrl = config.GetSection("ApplicationSettings")
                 .GetSection("TargetApiUrl").Get<string>();
             _requestUri = new Uri(targetUrl);
             _logger.Debug("{0} - instance initialized properly. ", nameof(ApiClient));
         }
 
-        public Task<HttpResponseMessage> PostSensorDataAsync(BmpMeasurementDto measurement)
+        private void AuthorizeHttpClient()
+        {
+            TimesRetried++;
+            JWTToken = _clientService.Authorize().Result;
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", JWTToken.ToString());
+        }
+
+        public async Task<HttpResponseMessage> PostSensorDataAsync(BmpMeasurementDto measurement)
         {
             var httpContent = JsonContent.Create(measurement);
             _logger.Debug("{0} - http content created properly. ", nameof(PostSensorDataAsync));
-            return _httpClient.PostAsync(_requestUri, httpContent);
+            HttpResponseMessage response = await _httpClient.PostAsync(_requestUri, httpContent);
+
+            if (TimesRetried == RetriesLimit)
+                throw new Exception("Client got stuck in endless loop. Credentials invalid or server malfunctioning");
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+               AuthorizeHttpClient();
+               response = await PostSensorDataAsync(measurement);
+            }
+
+            return response;
         }
     }
 }

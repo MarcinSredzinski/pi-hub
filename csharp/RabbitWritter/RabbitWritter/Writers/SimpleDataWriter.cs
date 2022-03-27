@@ -19,7 +19,7 @@ namespace RabbitWriter.Writers
 
         internal void WriteToQueue()
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 2; i++)
             {
                 var message = JsonSerializer.Serialize(new BmpMeasurementDto()
                 {

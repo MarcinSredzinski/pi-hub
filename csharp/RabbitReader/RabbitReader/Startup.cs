@@ -1,4 +1,5 @@
 ﻿using Core.Library.Api;
+using JwtAuth.Library.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -18,6 +19,7 @@ namespace RabbitReader
                 .AddSingleton<HttpClient>()
                 .AddSingleton<IApiClient, ApiClient>()
                 .AddSingleton<IApiHandler, ApiHandler>()
+                .AddSingleton<IClientService, ClientService>()
                 .AddSingleton<IQueueReaderDeclaration, QueueReaderDeclaration>();
         }
         internal static void BuildConfiguration(IConfigurationBuilder configurationBuilder)

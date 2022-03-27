@@ -29,7 +29,7 @@ namespace SensorDataStore.WebApi.Auth
 
 
             if (!_issuerService.VerifyPasswordHash(providedUser.Password, user.PasswordHash, user.PasswordSalt))
-                return Results.NotFound("Invalid password.");
+                return Results.NotFound("Invalid username or password.");
 
             var token = _issuerService.CreateToken(user);
 
