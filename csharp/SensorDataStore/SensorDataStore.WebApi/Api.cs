@@ -11,30 +11,12 @@ public static class Api
 {
     public static void ConfigureApi(this WebApplication app)
     {
-        app.MapGet("/GetAuthorized", GetAuthorized);//.RequireAuthorization();
-        app.MapPost("/PostAuthorized", PostAuthorized);
-        app.MapPost("/register", Register);
+      //  app.MapPost("/register", Register);
         app.MapPost("/login", Login);
 
         app.MapGet("/BMPSensor", Get);
         app.MapPost("/BMPSensor", Post);
     }
-
-
-    [Authorize(Policy = "GetAccess")]
-    private static async Task<IResult> GetAuthorized()//ISensorData sensorData)
-    {
-        // var results = await sensorData.GetAsync();
-        return Results.Ok("Dzieki za pomoc ziomeczku");
-        //results == null ? Results.NotFound() : Results.Ok(results);
-    }
-
-    [Authorize(Policy = "GetAccess")]
-    private static async Task<IResult> PostAuthorized(BmpMeasurementDto measurement)
-    {
-        return Results.Ok(measurement);
-    }
-
 
     private static async Task<IResult> Get(ISensorData sensorData)
     {
@@ -42,6 +24,7 @@ public static class Api
         return results == null ? Results.NotFound() : Results.Ok(results);
     }
 
+    [Authorize(Policy = "GetAccess")]
     private static async Task<IResult> Post(BmpMeasurementDto measurement, ISensorData sensorData)
     {
         await sensorData.InsertAsync(measurement);
@@ -54,11 +37,9 @@ public static class Api
         return authService.ValidateUser(request);
     }
 
-    //public static User user = new User();
 
     private static async Task<IResult> Register(IAuthService authService, UserDto request)
     {
         return await authService.Register(request);
     }
-
 }

@@ -25,9 +25,11 @@ namespace DataStore.Library.Data
             return all.Rows
                 .Select(row => new BmpMeasurementDto()
                 {
-                    DateTime = row.BMPSensorData.DateTime ?? row.BMPSensorData.dateTime,
-                    Pressure = row.BMPSensorData.Pressure ?? row.BMPSensorData.pressure,
-                    Temperature = row.BMPSensorData.Temperature ?? row.BMPSensorData.temperature
+                    Name =  row.BMPSensorData.name,
+                    Location = row.BMPSensorData.location,
+                    DateTime =  row.BMPSensorData.dateTime,
+                    Pressure =  row.BMPSensorData.pressure,
+                    Temperature = row.BMPSensorData.temperature
                 }).ToEnumerable();
         }
 

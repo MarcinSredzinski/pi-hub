@@ -19,18 +19,24 @@ namespace RabbitWriter.Writers
 
         internal void WriteToQueue()
         {
+
             for (int i = 0; i < 2; i++)
             {
-                var message = JsonSerializer.Serialize(new BmpMeasurementDto()
+                for (int j = 0; j < 2; j++)
                 {
-                    DateTime = DateTime.Now,
-                    Pressure = 1010 + i,
-                    Temperature = 27
-                });
-                var body = Encoding.UTF8.GetBytes(message);
-                _logger.Debug("{0} - created a message: {1} ready to be pushed.", nameof(WriteToQueue), message);
+                    var message = JsonSerializer.Serialize(new BmpMeasurementDto()
+                    {
+                        Name = "SensorNamed" + j,
+                        Location = "SensorLocatedIn" + j,
+                        DateTime = DateTime.Now,
+                        Pressure = 1010 + i,
+                        Temperature = 27
+                    });
+                    var body = Encoding.UTF8.GetBytes(message);
+                    _logger.Debug("{0} - created a message: {1} ready to be pushed.", nameof(WriteToQueue), message);
 
-                _queueWriterDeclaration.PushMessage(body);
+                    _queueWriterDeclaration.PushMessage(body);
+                }
             }
         }
     }

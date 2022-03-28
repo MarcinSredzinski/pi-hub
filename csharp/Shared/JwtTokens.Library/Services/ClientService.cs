@@ -1,8 +1,6 @@
 ﻿using JwtAuth.Library.Models;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 
 namespace JwtAuth.Library.Services

@@ -1,10 +1,9 @@
-﻿using System.Net.Http.Json;
-using Core.Library.Api;
+﻿using Core.Library.Api;
 using Core.Library.Models;
 using JwtAuth.Library.Services;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Net.Http.Json;
 
 namespace RabbitReader.API
 {
@@ -47,8 +46,9 @@ namespace RabbitReader.API
                 throw new Exception("Client got stuck in endless loop. Credentials invalid or server malfunctioning");
             if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
-               AuthorizeHttpClient();
-               response = await PostSensorDataAsync(measurement);
+                _logger.Debug("{0} - Token expired. ", nameof(PostSensorDataAsync));
+                AuthorizeHttpClient();
+                response = await PostSensorDataAsync(measurement);
             }
 
             return response;
