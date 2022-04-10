@@ -19,7 +19,7 @@ namespace RabbitReader
                 .AddSingleton<HttpClient>()
                 .AddSingleton<IApiClient, ApiClient>()
                 .AddSingleton<IApiHandler, ApiHandler>()
-                .AddSingleton<IClientService, ClientService>()
+                .AddSingleton<IAuthorizationService, AuthorizationService>()
                 .AddSingleton<IQueueReaderDeclaration, QueueReaderDeclaration>();
         }
         internal static void BuildConfiguration(IConfigurationBuilder configurationBuilder)

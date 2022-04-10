@@ -5,12 +5,12 @@ using System.Net.Http.Json;
 
 namespace JwtAuth.Library.Services
 {
-    public interface IClientService
+    public interface IAuthorizationService
     {
         Task<string> Authorize();
     }
 
-    public class ClientService : IClientService
+    public class AuthorizationService : IAuthorizationService
     {
 
         private readonly ILogger _logger;
@@ -18,7 +18,7 @@ namespace JwtAuth.Library.Services
         private readonly UserDto _userDto;
         private readonly string authUrl;
 
-        public ClientService(HttpClient httpClient, IConfiguration config, ILogger logger)
+        public AuthorizationService(HttpClient httpClient, IConfiguration config, ILogger logger)
         {
             _logger = logger;
             _httpClient = httpClient;
@@ -33,7 +33,7 @@ namespace JwtAuth.Library.Services
                 .GetSection("Password").Value
             };
 
-            _logger.Debug("{0} - instance initialized properly. ", nameof(ClientService));
+            _logger.Debug("{0} - instance initialized properly. ", nameof(AuthorizationService));
         }
 
         /*
