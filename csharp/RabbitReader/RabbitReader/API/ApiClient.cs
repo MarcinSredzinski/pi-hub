@@ -38,11 +38,10 @@ namespace RabbitReader.API
 
         public async Task<HttpResponseMessage> PostSensorDataAsync(BmpMeasurementDto measurement)
         {
-            var authorization = AuthorizeHttpClient();
             var httpContent = JsonContent.Create(measurement);
             _logger.Debug("{0} - http content created properly. ", nameof(PostSensorDataAsync));
 
-            await authorization;
+            await AuthorizeHttpClient(); 
 
             HttpResponseMessage response = await _httpClient.PostAsync(_requestUri, httpContent);
 

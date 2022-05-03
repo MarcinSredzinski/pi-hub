@@ -55,9 +55,13 @@ namespace JwtAuth.Library.Services
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                var aaa = await response.Content.ReadFromJsonAsync<string>();
+                var jwt = await response.Content.ReadFromJsonAsync<string>();
+                if (string.IsNullOrEmpty(jwt))
+                {
+                    throw new Exception($"{nameof(Authorize)} - Failed to obtain JWT Token. ");
+                }
                 _logger.Debug("{0} - Obtained JWT Token. ", nameof(Authorize));
-                return aaa;
+                return jwt;
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
